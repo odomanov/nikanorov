@@ -1,4 +1,4 @@
--- примеры: бинарные отношения + порождение мн-ва бинарных отношений
+-- примеры: синтез двух теорий
 {-# OPTIONS --cubical --warning=noUnsupportedIndexedMatch #-}
 {-# OPTIONS --guardedness #-}
 
@@ -15,7 +15,7 @@ open import Cubical.Data.Empty using (⊥*; isProp⊥*)
 open import Cubical.Data.FinData using (Fin; zero; suc; one; two; three; four; five; toℕ)
 open import Cubical.Data.Nat using (ℕ; zero; suc; _+_; _∸_; isSetℕ; max)
 open import Cubical.Data.Nat.Order using (_≤_; isProp≤)
-open import Cubical.Data.Sigma --using (_×_; _,_; ∃; ∃-syntax;)
+open import Cubical.Data.Sigma using (_×_; _,_; ∃; ∃-syntax)
 open import Cubical.Data.Sum using (_⊎_)
 open import Cubical.Data.Vec using (Vec; _∷_; []; lookup; head; tail; foldr; map) 
 open import Cubical.Data.Unit using (Unit; tt; isPropUnit)
@@ -64,6 +64,7 @@ S4 = M-Ступень BS2 M2 one
 S5 = M-Ступень BS2 M2 two
 S6 = M-Ступень BS2 M2 three
 
+-- проверяем их типы
 _ : S3 ≡ ℙ (ℙ ℕ × ℕ)
 _ = refl
 
@@ -79,20 +80,16 @@ _ = refl
 -- теория универсального отношения в синтезированной структуре
 open import Cubical.Relation.Binary.Base using (Rel)
 
--- обобщение PropRel на типы разных универсумов
-PropRel : ∀ {ℓX ℓY} (X : Type ℓX) (Y : Type ℓY) (ℓ' : Level)
-        → Type (ℓ-max (ℓ-max ℓX ℓY) (ℓ-suc ℓ'))
-PropRel X Y ℓ' = Σ[ R ∈ Rel X Y ℓ' ] ∀ a b → isProp (R a b)
+-- для упрощения используем PropRel, отличный от библиотечного
+PropRel : ∀ {ℓX ℓY} (X : Type ℓX) (Y : Type ℓY) (ℓ : Level) → Type _
+PropRel X Y ℓ = X → Y → hProp ℓ
 
 IsUniversal : ∀ {ℓX ℓY ℓ'} {X : Type ℓX} {Y : Type ℓY} (R : PropRel X Y ℓ') → Type _
-IsUniversal {X = X} {Y = Y} R = (x : X) (y : Y) → R .fst x y
-
-to× : ∀ {ℓX ℓY ℓ} {X : Type ℓX} {Y : Type ℓY} (R : PropRel X Y ℓ) → X × Y → hProp ℓ
-to× R x = uncurry (λ a b → R .fst a b , R .snd a b) x
+IsUniversal {X = X} {Y = Y} R = (x : X) (y : Y) → fst (R x y)
 
 IsUniversal× : ∀ {ℓX ℓY} {X : Type ℓX} {Y : Type ℓY} (R× : ℙ (X × Y)) → hProp _
 IsUniversal× {X = X} {Y = Y} R× =
-  (∃[ R ∈ PropRel X Y _ ] (IsUniversal R) × (R× ≡ to× R)) , squash₁
+  (∃[ R ∈ PropRel X Y _ ] (IsUniversal R) × (R× ≡ uncurry R)) , squash₁
 
 -- добавляем ступень
 S7 = M-Ступень BS2 (𝔅 zero & M2) zero
