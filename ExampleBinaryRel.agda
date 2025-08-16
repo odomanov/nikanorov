@@ -40,12 +40,12 @@ PropRel : ∀ {ℓX ℓY} (X : Type ℓX) (Y : Type ℓY) (ℓ : Level) → Type
 PropRel X Y ℓ = X → Y → hProp ℓ
 
 -- условие рефлексивности для отношения
-IsRefl : ∀ {ℓ ℓ'} {X : Type ℓ} (R : PropRel X X ℓ') → Type _
+IsRefl : ∀ {ℓ ℓ'} {X : Type ℓ} → PropRel X X ℓ' → Type _
 IsRefl R = ∀ x → fst (R x x)
 
 -- условие рефлексивности для множества пар (uncurry)
-IsRefl× : ∀ {ℓ} {X : Type ℓ} (R× : ℙ (X × X)) → hProp _
-IsRefl× {ℓ} {X} R× = (∃[ R ∈ PropRel X X ℓ ] (IsRefl R) × (R× ≡ uncurry R))
+IsRefl× : ∀ {ℓ} {X : Type ℓ} → ℙ (X × X) → hProp _
+IsRefl× R× = (∃[ R ∈ PropRel _ _ _ ] (IsRefl R) × (R× ≡ uncurry R))
                    , squash₁
 
 -- Множество рефлексивных отношений (элемент нужной ступени)
@@ -62,8 +62,8 @@ s = IsRefl×
 ReflRel : ∀ {ℓ ℓ'} (X : Type ℓ) → Type _
 ReflRel {ℓ} {ℓ'} X = Σ[ R ∈ PropRel X X ℓ' ] IsRefl R
 
-IsRefl×' : ∀ {ℓ} {X : Type ℓ} (R× : ℙ (X × X)) → hProp _
-IsRefl×' {ℓ} {X} R× = (∃[ R ∈ ReflRel {ℓ} {ℓ} X ] R× ≡ uncurry (fst R)) , squash₁
+IsRefl×' : ∀ {ℓ} {X : Type ℓ} → ℙ (X × X) → hProp _
+IsRefl×' R× = (∃[ R ∈ ReflRel _ ] R× ≡ uncurry (fst R)) , squash₁
 
 s' : ∀ {Sh : СхемаСтупени 1} → Ступень (𝔅 (𝔅 (𝔇 (Sh ∷ Sh ∷ []))))
 s' = IsRefl×' 

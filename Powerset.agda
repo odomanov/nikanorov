@@ -23,10 +23,10 @@ private
     Y : Type ℓY
   
 -- подтип X, соответствующий ℙ X
-ℙΣ : ∀ (X : Type ℓX) (P : ℙ X) → Type ℓX
-ℙΣ X P = Σ[ x ∈ X ] ⟨ P x ⟩
+ℙΣ : ∀ {X : Type ℓX} (P : ℙ X) → Type ℓX
+ℙΣ {X = X} P = Σ[ x ∈ X ] ⟨ P x ⟩
 
-ℙΣIsSet : ∀ (X : hSet ℓX) (P : ℙ ⟨ X ⟩) → isSet (ℙΣ {ℓX} ⟨ X ⟩ P)
+ℙΣIsSet : ∀ (X : hSet ℓX) (P : ℙ ⟨ X ⟩) → isSet (ℙΣ P)
 ℙΣIsSet X P = isSetΣSndProp (X .snd) λ x → P x .snd
 
 _∩ᵖ_ : ℙ X → ℙ X → ℙ X
@@ -55,6 +55,6 @@ A ×ᵖ B = λ { (x , y) → (x ∈ A) × (y ∈ B) , isProp× (∈-isProp A x) 
 _^ᵖ_ : ∀ {ℓX ℓY} {X : Type ℓX} {Y : Type ℓY} → ℙ Y → ℙ X → ℙ (ℙ (X × Y))
 _^ᵖ_ {ℓX} {ℓY} {X} {Y} B A pairs = isfunA→B pairs , squash₁
   where
-  isfunA→B : ℙ (X × Y) → Type _  --(ℓ-max (ℓ-suc ℓX) (ℓ-suc ℓY)) 
-  isfunA→B ps = ∃[ f ∈ (ℙΣ {ℓX} X A → ℙΣ {ℓY} Y B) ]
-                 (ℙΣ (X × Y) ps) ≡ (Σ[ x ∈ ℙΣ X A ] ⟨ (B (fst (f x))) ⟩)
+  isfunA→B : ℙ (X × Y) → Type _  
+  isfunA→B ps = ∃[ f ∈ (ℙΣ A → ℙΣ B) ]
+                 (ℙΣ ps) ≡ (Σ[ x ∈ ℙΣ A ] ⟨ (B (fst (f x))) ⟩)
