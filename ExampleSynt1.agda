@@ -121,6 +121,9 @@ S6' = M-Ступень BS3 M2 three
 _ : S3' ≡ ℙ (⟨ hs ⟩ × ⟨ hs ⟩)
 _ = refl
 
+_ : S3' ≡ ℙ (ℙΣ s × ℙΣ s) 
+_ = refl
+
 _ : S4' ≡ ⟨ hs ⟩ × ⟨ hs ⟩
 _ = refl
 
